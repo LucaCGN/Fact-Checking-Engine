@@ -1,0 +1,87 @@
+# TruthLens AI Fact-Checking Pipeline Documentation
+
+## Overview
+
+TruthLens is an AI-driven backend application designed for a VPS-hosted FastAPI and LangChain platform that performs comprehensive fact-checking on various media inputs, including images, audio, links, and text. The application processes these inputs to determine the authenticity and veracity of the content, culminating in a truth assessment for each case.
+
+## Folder Structure and Component Functions
+
+```
+TRUTH-LENS
+│   config.txt
+│   main.py
+│
+├───agents
+│   │   __init__.py
+│   │   journalist.py        # Handles the generation of fact-checking points and final assessment
+│   │   researcher.py        # Consolidates outputs from various tools for analysis
+│   │   transcriber.py       # Converts speech to text and contextualizes it
+│   │   vision.py            # Manages multimodal tasks including image description and standardization
+│
+├───pipelines
+│   │   deepfake_audio.py    # Pipeline for processing and assessing audio files
+│   │   deepfake_image.py    # Pipeline for processing and assessing image files
+│   │   source_crossing.py   # Pipeline for cross-referencing sources for verification
+│   │   statement_check.py   # Pipeline for checking statements against verified facts
+│
+├───storage
+│   │
+│   ├───database             # Stores fact-checked content and assessments
+│   ├───logs                 # Logs for the application processes
+│   └───test_input           # Contains input files for testing purposes
+│       │   test_trump.jpeg  # Example input file
+│
+├───tools
+│   │   __init__.py
+│   │   audio_formatting.py  # Tool for audio file format conversion
+│   │   factcheck_api.py     # Tool for accessing fact-checking APIs
+│   │   image_formatting.py  # Tool for image file format conversion
+│   │   newsapi.py           # LangChain tool for fetching articles from NewsAPI
+│   │   serpapi.py           # LangChain tool for accessing SerpAPI for search results
+│
+└───utils
+    │   check_existing_fact.py  # Checks if content has already been fact-checked
+    │   save_new_fact.py        # Adds a new fact-check entry to the database
+```
+
+## Application Logic and Python Libraries
+
+### Main Entry Point
+
+- `main.py`: Serves as the entry point for the application. It defines FastAPI endpoints that trigger various pipelines based on the input received.
+
+### Pipelines
+
+- Pipelines are built using Luigi and encapsulate the logic for different fact-checking scenarios. Each pipeline uses agents and utilities to process the input, query APIs, analyze data, and provide a veracity assessment.
+
+### Agents
+
+- Agents are designed as taks in the Luigi pipelines and as individual actors in the fact-checking process, each performing specialized tasks which are structured as Luigi tasks for modularity and scalability.
+
+### Tools
+
+- The tools directory contains LangChain function-calling tools tailored for different APIs required by the application, such as NewsAPI and SerpAPI.
+
+### Utilities
+
+- Utilities offer support functionalities such as checking the database for existing facts or adding new entries to maintain a comprehensive fact-checking record.
+
+## Functionality
+
+The application dual functionality includes the execution of the fact-checking pipeline and streaming of results. Each step of the pipeline can provide JSON outputs for frontend integration, enabling a transparent and interactive fact-checking process.
+
+## Design Considerations
+
+- The system is optimized for speed and accuracy, aiming to balance comprehensive fact-checking with prompt responses.
+- Resource management is a key concern, ensuring the efficient use of computational resources, particularly during concurrent processing of multiple requests.
+- The application architecture supports scalability, allowing for an increase in computational resources to accommodate growing user demand.
+
+## Production Development Points
+
+- The application is structured to dynamically handle images, audio, links, and text, with a focus on text processing as the final input/output for the LLM backend.
+- Standardization and format support for audio and image files are essential initial steps in preparing inputs for processing.
+- The backend is designed to operate concurrently for multiple users, maintaining performance and reliability.
+- A long-term goal includes the creation of a fact-checking database to build upon past analyses and assessments.
+- Flexibility is built into the system to cater to general fact-checking needs and specialized scenarios such as U.S. elections, selectable via API call parameters.
+
+This comprehensive documentation provides an updated overview of the TruthLens application, detailing the structure, functionality, and strategic considerations for developing an effective AI fact-checking pipeline.
